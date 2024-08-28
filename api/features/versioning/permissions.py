@@ -27,7 +27,7 @@ class EnvironmentFeatureVersionPermissions(BasePermission):
         required_permission = UPDATE_FEATURE_STATE
 
         if required_permission in TAG_SUPPORTED_ENVIRONMENT_PERMISSIONS:
-            feature_id = request.data.get("feature")
+            feature_id = request.data.get("feature") or view.kwargs["feature_pk"]
             if feature_id:
                 feature = Feature.objects.get(id=feature_id)
                 tag_ids = list(feature.tags.values_list("id", flat=True))

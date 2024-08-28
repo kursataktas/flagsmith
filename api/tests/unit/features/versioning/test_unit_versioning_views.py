@@ -23,6 +23,7 @@ from features.models import Feature, FeatureSegment, FeatureState
 from features.multivariate.models import MultivariateFeatureOption
 from features.versioning.models import EnvironmentFeatureVersion
 from projects.permissions import VIEW_PROJECT
+from projects.tags.models import Tag
 from segments.models import Segment
 from tests.types import (
     WithEnvironmentPermissionsCallable,
@@ -286,13 +287,16 @@ def test_publish_feature_version(
     environment_v2_versioning: Environment,
     feature: Feature,
     live_from: typing.Optional[datetime],
+    tag: Tag,
 ) -> None:
     # Given
     # an unpublished version
+    feature.tags.add(tag)
+    feature.save()
     environment_feature_version = EnvironmentFeatureVersion.objects.create(
         environment=environment_v2_versioning, feature=feature
     )
-
+    # test that the live_from date is set correctly
     url = reverse(
         "api-v1:versioning:environment-feature-versions-publish",
         args=[
